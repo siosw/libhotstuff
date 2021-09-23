@@ -18,6 +18,8 @@
 #ifndef _HOTSTUFF_LIVENESS_H
 #define _HOTSTUFF_LIVENESS_H
 
+#include <random>
+
 #include "salticidae/util.h"
 #include "hotstuff/hotstuff.h"
 
@@ -220,6 +222,27 @@ class PaceMakerDummyFixed: public PaceMakerDummy {
     promise_t beat_resp(ReplicaID) override {
         return promise_t([this](promise_t &pm) {
             pm.resolve(proposer);
+        });
+    }
+};
+
+/** PaceMakerDummy with a random proposer. */
+class PaceMakerDummyRandom: public PaceMakerDummy {
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(0, 4); // define the range
+
+    public:
+    PaceMakerDummyFixed(int32_t parent_limit):
+        PaceMakerDummy(parent_limit) {}
+
+    ReplicaID get_proposer() override {
+        return distr(gen);
+    }
+
+    promise_t beat_resp(ReplicaID) override {
+        return promise_t([this](promise_t &pm) {
+            pm.resolve(distr(gen));
         });
     }
 };
