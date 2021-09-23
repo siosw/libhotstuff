@@ -239,7 +239,7 @@ class PaceMakerDummyRandom: public PaceMakerDummy {
     }
 
     promise_t beat_resp(ReplicaID) override {
-        proposer = rand() % 4;
+        proposer(rand() % 4);
         return promise_t([this](promise_t &pm) {
             pm.resolve(proposer);
         });
