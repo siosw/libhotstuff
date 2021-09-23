@@ -228,23 +228,20 @@ class PaceMakerDummyFixed: public PaceMakerDummy {
 
 /** PaceMakerDummy with a random proposer. */
 class PaceMakerDummyRandom: public PaceMakerDummy {
+    ReplicaID proposer;
+
     public:
-    PaceMakerDummyFixed(int32_t parent_limit):
-        PaceMakerDummy(parent_limit) {}
+    PaceMakerDummyRandom(int32_t parent_limit):
+        PaceMakerDummy(parent_limit), proposer(0) {} // init with replica 0 as first proposer
 
     ReplicaID get_proposer() override {
-        std::random_device rd; // obtain a random number from hardware
-        std::mt19937 gen(rd()); // seed the generator
-        std::uniform_int_distribution<> distr(0, 4); // define the range
-        return distr(gen);
+        return proposer;
     }
 
     promise_t beat_resp(ReplicaID) override {
-        std::random_device rd; // obtain a random number from hardware
-        std::mt19937 gen(rd()); // seed the generator
-        std::uniform_int_distribution<> distr(0, 4); // define the range
+        proposer = rand() % 4;
         return promise_t([this](promise_t &pm) {
-            pm.resolve(distr(gen));
+            pm.resolve(proposer);
         });
     }
 };
