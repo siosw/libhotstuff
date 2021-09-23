@@ -241,7 +241,7 @@ int main(int argc, char **argv) {
         pmaker = new hotstuff::PaceMakerDummyFixed(opt_fixed_proposer->get(), parent_limit);
     else if (opt_pace_maker->get() == "any-dummy")
         pmaker = new hotstuff::PaceMakerDummy(parent_limit);
-    else if (opt_pace_maker->get() == "random-dummy")
+    else if (opt_pace_maker->get() == "rn")
         pmaker = new hotstuff::PaceMakerDummyRandom(parent_limit);
     else
         pmaker = new hotstuff::PaceMakerRR(ec, parent_limit, opt_base_timeout->get(), opt_prop_delay->get());
